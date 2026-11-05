@@ -1,7 +1,7 @@
 # Antigravity Models for VS Code
 
-[![ci](https://github.com/zxclushkin/dsh-plugin-antigravity/actions/workflows/ci.yml/badge.svg)](https://github.com/zxclushkin/dsh-plugin-antigravity/actions/workflows/ci.yml)
-[![vscode release](https://github.com/zxclushkin/dsh-plugin-antigravity/actions/workflows/vscode-release.yml/badge.svg)](https://github.com/zxclushkin/dsh-plugin-antigravity/actions/workflows/vscode-release.yml)
+[![ci](https://github.com/zxclushkin/antigravity-chat/actions/workflows/ci.yml/badge.svg)](https://github.com/zxclushkin/antigravity-chat/actions/workflows/ci.yml)
+[![release](https://github.com/zxclushkin/antigravity-chat/actions/workflows/release.yml/badge.svg)](https://github.com/zxclushkin/antigravity-chat/actions/workflows/release.yml)
 
 Google **Antigravity** models — Gemini 3.8/3.5/3/2.5, Claude Opus/Sonnet 5.5, GPT-OSS 120B and
 the Gemini image model — inside VS Code chat, as a native
@@ -9,19 +9,23 @@ the Gemini image model — inside VS Code chat, as a native
 
 No API key, no proxy, no separate account: the extension reuses the session of the
 **installed Antigravity app** (the OS keyring entry `gemini:antigravity`) and talks to the same
-private endpoint from inside the extension host. It is the VS Code sibling of
-[`dsh-plugin-antigravity`](../plugin) and shares that plugin's transport core, so both
-front-ends speak the exact same protocol, credentials and tool-call encoding.
+private endpoint from inside the extension host.
 
 ```
 VS Code chat / Copilot agent
    │  vscode.lm.registerLanguageModelChatProvider('antigravity', …)
    ▼
-antigravity-chat (this extension)  ──►  POST https://daily-cloudcode-pa.googleapis.com
+antigravity-chat  ──►  POST https://daily-cloudcode-pa.googleapis.com
    │  text / tool-call / image parts                    /v1internal:streamGenerateContent
    ▼                                                     (Gemini-shaped JSON, SSE)
 Gemini 3.8 / 3.5 / 3 / 2.5 · Claude Opus & Sonnet 5.5 · GPT-OSS 120B · gemini-3.1-flash-image
 ```
+
+This is the VS Code front-end of the Antigravity work. The transport core (credentials, the
+private `v1internal` client, Gemini translation, error classification) is shared with the DSH
+plugin [`dsh-plugin-antigravity`](https://github.com/zxclushkin/dsh-plugin-antigravity) and
+vendored into [`src/core`](src/core/README.md) with a hash-checked sync tool, so this
+repository builds and installs on its own.
 
 Unofficial client. Not affiliated with, endorsed by, or supported by Google or Microsoft.
 
@@ -41,7 +45,7 @@ installation:
 | Live checks against the real endpoint (catalogue, text turn, tool call round trip, image input) | **4/4** |
 | Live extras: image-model output (508 KB JPEG), tool names with dots/dashes, forced tool mode on Gemini/Claude/GPT-OSS | **works** (`AG_IMAGE=1 AG_EXTRA=1 npm run test:live`) |
 | Extension host: contribution point + activation + model discovery | provider activated via `onLanguageModelChatProvider:antigravity`, 18 models (17 chat + 1 image) fetched from the account |
-| Settings GUI, quirk handling | commands `Antigravity: Show account status` / `Refresh model list` |
+| Vendored core | four modules byte-identical to `dsh-plugin-antigravity` `plugin/src`, checked by `npm run check-core` in CI |
 
 ## Requirements
 
@@ -53,29 +57,25 @@ installation:
 ## Install
 
 The extension is not on the VS Code Marketplace — every
-[release](https://github.com/zxclushkin/dsh-plugin-antigravity/releases) carries the built VSIX,
-so installing from GitHub needs no clone, no build and no account.
+[release](https://github.com/zxclushkin/antigravity-chat/releases) carries the built VSIX, so
+installing from GitHub needs no clone, no build and no account.
 
 **From the release (recommended)**
 
 ```powershell
-# GitHub CLI: replace the tag with the newest vscode-v* release from the Releases page
-gh release download vscode-v0.1.0 --repo zxclushkin/dsh-plugin-antigravity `
+# GitHub CLI: replace the tag with the newest release from the Releases page
+gh release download v0.1.0 --repo zxclushkin/antigravity-chat `
   --pattern antigravity-chat.vsix --dir "$env:TEMP\antigravity-chat"
 
 code --install-extension "$env:TEMP\antigravity-chat\antigravity-chat.vsix" --force
 ```
 
-The tag is explicit on purpose: DSH-plugin releases use the same Releases feed, so "latest"
-is not necessarily the extension. Or open the
-[Releases page](https://github.com/zxclushkin/dsh-plugin-antigravity/releases), download
-`antigravity-chat.vsix` from the `vscode-v*` release, then in VS Code:
-**Extensions → ⋯ → Install from VSIX…**.
+Or open the [Releases page](https://github.com/zxclushkin/antigravity-chat/releases), download
+`antigravity-chat.vsix`, then in VS Code: **Extensions → ⋯ → Install from VSIX…**.
 
 **From source**
 
 ```powershell
-cd vscode
 npm install
 npm run package
 code --install-extension antigravity-chat.vsix --force
@@ -87,11 +87,11 @@ models you want. They appear in the picker under "Antigravity"; pick one and cha
 uses for its own models.
 
 Maintainers publish a release by pushing a version tag — CI builds, tests and attaches the VSIX
-(`.github/workflows/vscode-release.yml`):
+(`.github/workflows/release.yml`):
 
 ```powershell
-git tag vscode-v0.1.0
-git push origin vscode-v0.1.0
+git tag v0.1.1
+git push origin v0.1.1
 ```
 
 ## What works
@@ -132,21 +132,21 @@ when the account catalogue says so.
 ## How it is built
 
 ```
-vscode/
-  src/extension.ts   activation: provider registration, commands, settings
-  src/provider.ts    LanguageModelChatProvider: messages in, parts out
-  src/harness.ts     VS Code messages  -> transport message vocabulary
-  src/generation.ts  upstream SSE events -> text / thinking / toolCall / image
-  src/catalogue.ts   account models -> LanguageModelChatInformation
-  src/status.ts      account status markdown
-  test/              offline checks, live checks, extension-host smoke test
+src/
+  extension.ts   activation: provider registration, commands, settings
+  provider.ts    LanguageModelChatProvider: messages in, parts out
+  harness.ts     VS Code messages  -> transport message vocabulary
+  generation.ts  upstream SSE events -> text / thinking / toolCall / image
+  catalogue.ts   account models -> LanguageModelChatInformation
+  status.ts      account status markdown
+  core/          vendored transport (see src/core/README.md)
+test/            offline checks, live checks, extension-host smoke test
+tools/           sync-core.mjs: refresh and verify the vendored core
 ```
 
-The transport lives in `../plugin/src` (`antigravity.mjs`, `gemini.mjs`, `errors.mjs`,
-`throttle.mjs`) and is shared with the DSH plugin rather than copied. `esbuild` bundles it into
-`dist/extension.js`, so the installed VSIX is self-contained. The provider never imports the
-`vscode` module at runtime — part constructors are injected — which is what makes the whole
-request path testable in plain Node.
+`esbuild` bundles `src/` and `src/core/` into `dist/extension.js`, so the installed VSIX is
+self-contained. The provider never imports the `vscode` module at runtime — part constructors
+are injected — which is what makes the whole request path testable in plain Node.
 
 ## Development
 
@@ -159,6 +159,14 @@ AG_IMAGE=1 AG_EXTRA=1 npm run test:live   # + image-model output and odd tool na
 npm run package       # builds dist/ and antigravity-chat.vsix
 ```
 
+Updating the vendored core (needs a checkout of the DSH plugin repository):
+
+```powershell
+$env:ANTIGRAVITY_PLUGIN_DIR = "..\dsh-plugin-antigravity"
+npm run sync-core     # copy plugin/src/{antigravity,gemini,errors,throttle}.mjs + refresh upstream.json
+npm run check-core    # verify hashes only (what CI runs)
+```
+
 Extension-host smoke test (proves the contribution point, activation event and live catalogue
 inside a real VS Code). Redirect the output: VS Code is a GUI process, so a plain invocation
 returns immediately and hides the test log.
@@ -167,8 +175,8 @@ returns immediately and hides the test log.
 $env:ELECTRON_RUN_AS_NODE = $null
 $code = "$env:LOCALAPPDATA\Programs\Microsoft VS Code\Code.exe"
 $testArgs = @(
-  "--extensionDevelopmentPath=$PWD\vscode",
-  "--extensionTestsPath=$PWD\vscode\test\host.cjs",
+  "--extensionDevelopmentPath=$PWD",
+  "--extensionTestsPath=$PWD\test\host.cjs",
   "--user-data-dir=$env:TEMP\ag-vscode-test"
 )
 Start-Process $code -ArgumentList $testArgs -Wait -RedirectStandardOutput "$env:TEMP\ag-test.txt"

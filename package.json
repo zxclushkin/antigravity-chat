@@ -93,7 +93,9 @@
     "test": "node esbuild.mjs --tests && node .tmp/unit.test.cjs",
     "test:live": "node esbuild.mjs --tests && node .tmp/live.test.cjs",
     "package": "node esbuild.mjs && vsce package --no-dependencies --out antigravity-chat.vsix",
-    "vscode:prepublish": "node esbuild.mjs"
+    "vscode:prepublish": "node esbuild.mjs",
+    "sync-core": "node tools/sync-core.mjs",
+    "check-core": "node tools/sync-core.mjs --check"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
@@ -104,13 +106,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/zxclushkin/dsh-plugin-antigravity.git",
-    "directory": "vscode"
+    "url": "https://github.com/zxclushkin/antigravity-chat.git"
   },
   "bugs": {
-    "url": "https://github.com/zxclushkin/dsh-plugin-antigravity/issues"
+    "url": "https://github.com/zxclushkin/antigravity-chat/issues"
   },
-  "homepage": "https://github.com/zxclushkin/dsh-plugin-antigravity/tree/main/vscode#readme",
+  "homepage": "https://github.com/zxclushkin/antigravity-chat#readme",
   "icon": "assets/icon.png",
   "galleryBanner": {
     "color": "#0B1220",

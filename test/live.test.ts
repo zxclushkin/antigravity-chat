@@ -2,7 +2,7 @@
 // Antigravity app already holds. Run explicitly: `npm run test:live`.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createAntigravityClient } from '../../plugin/src/antigravity.mjs';
+import { createAntigravityClient } from '../src/core/antigravity.mjs';
 import { ModelCatalogue } from '../src/catalogue.js';
 import { AntigravityChatProvider } from '../src/provider.js';
 import { api, DataPart, user, assistant, ToolCallPart, ToolResultPart } from './fake.js';

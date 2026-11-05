@@ -1,7 +1,7 @@
 // Extension entry point: wires the Antigravity transport to VS Code's chat.
 import * as vscode from 'vscode';
-import { createAntigravityClient } from '../../plugin/src/antigravity.mjs';
-import { createThrottle } from '../../plugin/src/throttle.mjs';
+import { createAntigravityClient } from './core/antigravity.mjs';
+import { createThrottle } from './core/throttle.mjs';
 import { ModelCatalogue, type CatalogueClient } from './catalogue.js';
 import type { GenerationClient, ThrottleLike } from './generation.js';
 import { AntigravityChatProvider, type ProviderSettings } from './provider.js';

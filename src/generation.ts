@@ -4,8 +4,8 @@
 // verified against the real endpoint; this module turns those upstream events into the
 // small vocabulary the VS Code provider needs and translates failures into messages a
 // user can act on.
-import { httpError, transportError } from '../../plugin/src/errors.mjs';
-import { citationText, encodeToolCallId, groundingText, mapFinishReason } from '../../plugin/src/gemini.mjs';
+import { httpError, transportError } from './core/errors.mjs';
+import { citationText, encodeToolCallId, groundingText, mapFinishReason } from './core/gemini.mjs';
 
 export interface StreamResponse {
   ok: boolean;

@@ -1,0 +1,27 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  extension:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # The vendored transport must still match the hashes in src/core/upstream.json.
+      - run: npm run check-core
+      - run: npm run typecheck
+      # Offline only: test/live.test.ts needs a real Antigravity installation and quota.
+      - run: npm test
+      - run: npm run package
+      - uses: actions/upload-artifact@v4
+        with:
+          name: antigravity-chat-vsix
+          path: antigravity-chat.vsix

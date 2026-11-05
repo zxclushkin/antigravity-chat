@@ -1,0 +1,12 @@
+{
+  "source": "zxclushkin/dsh-plugin-antigravity",
+  "path": "plugin/src",
+  "commit": "9daff2debb9f76c62909912c3c5775c6bdd929ae",
+  "syncedAt": "2026-11-05T19:18:05.790Z",
+  "files": {
+    "antigravity.mjs": "sha256:49e488d12345eb6eaa0e9b54bd3372811dc9ff7668843ae642f7756b46622bb8",
+    "gemini.mjs": "sha256:667493b32666f88bb6514d3060252cc4b8720b42bacc16da0127fa33be5bcb9d",
+    "errors.mjs": "sha256:c50641a7179282efebf38ba3363b3aaed502034a8a013a2d14b3fc744a1a5e64",
+    "throttle.mjs": "sha256:efeb282a8eb703a3f6b1f5003970a7fa2a572fc5ec076928fe07f28aa5b92b3d"
+  }
+}

@@ -4,7 +4,7 @@
 // response parts arrive through `deps.api`, which keeps the whole request path testable
 // in Node against the real Antigravity endpoint.
 import type * as vscode from 'vscode';
-import { buildGenerateRequest } from '../../plugin/src/gemini.mjs';
+import { buildGenerateRequest } from './core/gemini.mjs';
 import { toChatInformation, type CatalogueModel, type ModelCatalogue } from './catalogue.js';
 import { generate, AntigravityFailure, type GenerationClient, type ThrottleLike } from './generation.js';
 import { convertMessages, convertTools } from './harness.js';

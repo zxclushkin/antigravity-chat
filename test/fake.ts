@@ -1,5 +1,5 @@
 // Test doubles: VS Code part classes and an Antigravity client that streams canned SSE.
-import { parseGenerationStream } from '../../plugin/src/antigravity.mjs';
+import { parseGenerationStream } from '../src/core/antigravity.mjs';
 
 export class TextPart {
   constructor(readonly value: string) {}

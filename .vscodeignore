@@ -1,11 +1,14 @@
 **/*.ts
 **/*.map
-.gitignore
+src/**
+tools/**
 test/**
 .vscode/**
+.github/**
 node_modules/**
 .tmp/**
 antigravity-chat.vsix
 esbuild.mjs
 tsconfig.json
 package-lock.json
+.gitignore

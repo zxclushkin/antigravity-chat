@@ -5,7 +5,7 @@
 // list; this module filters out the entries that are not chat models (IDE tab
 // completions, internal routers, tiered aliases) and shapes the rest for the picker.
 import type * as vscode from 'vscode';
-import { prettyModelName } from '../../plugin/src/adapter.mjs';
+import { prettyModelName } from './naming.js';
 
 /** IDE tab-completion models, internal routers and tiered aliases answer, but not as chat models. */
 const NOT_A_MODEL = /^(tab_|chat_)|-tiered$/i;
